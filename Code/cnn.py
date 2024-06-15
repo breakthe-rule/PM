@@ -15,7 +15,32 @@ import numpy as np
 def cnn(maxlen,chars,target_chars,X,X_val,y_a,y_a_val,y_t,y_t_val,target_indices_char,divisor):
   # Define input layers
   cnn_input = Input(shape=(maxlen, len(chars) + 5))
+  ''' HelpDesk '''
+  # # CNN branch
+  # cnn_layer1 = Conv1D(filters=32, kernel_size=2, activation='relu',kernel_initializer='glorot_uniform',activity_regularizer=L2(l2=0.01))(cnn_input)
+  # cnn_layer1 = BatchNormalization()(cnn_layer1)
+  # cnn_pool1 = AveragePooling1D(pool_size=2)(cnn_layer1)
+  # cnn_flatten = Flatten()(cnn_pool1)
 
+  # # Activity prediction branch
+  # dense_act1 = Dense(64, activation='relu',activity_regularizer=L2(l2=0.001), kernel_initializer='glorot_uniform')(cnn_flatten)
+  # act_output = Dense(len(target_chars), activation='softmax', name='act_output',kernel_initializer='glorot_uniform')(dense_act1)
+
+  # # Time prediction branch
+  # dense_time1 = Dense(60, activation='elu',activity_regularizer=L2(l2=0.01))(cnn_flatten)
+  # time_output = Dense(1, activation='relu', name='time_output')(dense_time1)
+
+  # # Create model
+  # model = tf.keras.Model(inputs=[cnn_input], outputs=[act_output, time_output])
+
+  # # Compile model
+  # optimizer = tf.keras.optimizers.Adam(learning_rate=0.0005, beta_1=0.9, beta_2=0.998, epsilon=1e-07)
+  # model.compile(loss={'act_output': 'categorical_crossentropy', 'time_output': 'mae'}, optimizer=optimizer)
+  
+  # early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True,mode="min")
+  # reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=7)
+
+  '''BPI_12_W'''
   # CNN branch
   cnn_layer1 = Conv1D(filters=32, kernel_size=2, activation='relu',kernel_initializer='glorot_uniform',activity_regularizer=L2(l2=0.01))(cnn_input)
   cnn_layer1 = BatchNormalization()(cnn_layer1)
@@ -23,18 +48,18 @@ def cnn(maxlen,chars,target_chars,X,X_val,y_a,y_a_val,y_t,y_t_val,target_indices
   cnn_flatten = Flatten()(cnn_pool1)
 
   # Activity prediction branch
-  dense_act1 = Dense(64, activation='relu',activity_regularizer=L2(l2=0.001), kernel_initializer='glorot_uniform')(cnn_flatten)
-  act_output = Dense(len(target_chars), activation='softmax', name='act_output',kernel_initializer='glorot_uniform')(dense_act1)
+  dense_act1 = Dense(64, activation='softmax',activity_regularizer=L2(l2=0.001), kernel_initializer='glorot_uniform')(cnn_flatten)
+  act_output = Dense(len(target_chars), activation='softmax', name='act_output',kernel_initializer='glorot_uniform')(cnn_flatten)
 
   # Time prediction branch
-  dense_time1 = Dense(60, activation='elu',activity_regularizer=L2(l2=0.01))(cnn_flatten)
-  time_output = Dense(1, activation='relu', name='time_output')(dense_time1)
+  dense_time1 = Dense(64, activation='elu',activity_regularizer=L2(l2=0.01))(cnn_flatten)
+  time_output = Dense(1, activation='relu', name='time_output')(cnn_flatten)
 
   # Create model
   model = tf.keras.Model(inputs=[cnn_input], outputs=[act_output, time_output])
 
   # Compile model
-  optimizer = tf.keras.optimizers.Adam(learning_rate=0.0005, beta_1=0.9, beta_2=0.998, epsilon=1e-07)
+  optimizer = tf.keras.optimizers.Adam(learning_rate=0.001, beta_1=0.9, beta_2=0.998, epsilon=1e-07)
   model.compile(loss={'act_output': 'categorical_crossentropy', 'time_output': 'mae'}, optimizer=optimizer)
   
   early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True,mode="min")
