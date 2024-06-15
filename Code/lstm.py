@@ -52,18 +52,22 @@ def lstm(maxlen,chars,target_chars,CX,CX_val,X,X_val,y_a,y_a_val,y_t,y_t_val,tar
   #                     callbacks=[ lr_reducer], epochs=30)
   
   ''' BPI_12_W'''
-  l1 = LSTM(16, kernel_initializer='glorot_uniform', return_sequences=True, dropout=0.2)(main_input) # the shared layer
+  l1 = LSTM(32, kernel_initializer='glorot_uniform', return_sequences=True)(main_input) # the shared layer
   b1 = BatchNormalization()(l1)
+  l2 = LSTM(16, kernel_initializer='glorot_uniform', return_sequences=False, dropout=0.2)(b1) 
+  b2 = BatchNormalization()(l2)
   
   #branching
-  l2_1 = LSTM(16, kernel_initializer='glorot_uniform', return_sequences=False, dropout=0.2)(b1) # the layer specialized in activity prediction
-  b2_1 = BatchNormalization()(l2_1)
-  l2_2 = LSTM(16, kernel_initializer='glorot_uniform', return_sequences=False, dropout=0.2)(b1) # the layer specialized in time prediction
-  b2_2 = BatchNormalization()(l2_2)
-  
+  # l2_1 = LSTM(16, kernel_initializer='glorot_uniform', return_sequences=False, dropout=0.2)(b1) # the layer specialized in activity prediction
+  # b2_1 = BatchNormalization()(l2_1)
+  # l2_2 = LSTM(16, kernel_initializer='glorot_uniform', return_sequences=False, dropout=0.2)(b1) # the layer specialized in time prediction
+  # b2_2 = BatchNormalization()(l2_2)
+
   #output
-  act_output = Dense(len(target_chars), activation='softmax', kernel_initializer='glorot_uniform', name='act_output')(b2_1)
-  time_output = Dense(1, kernel_initializer='glorot_uniform', name='time_output')(b2_2)
+  b2 = Dense(32,activation = "relu")(b2)
+  act_output = Dense(len(target_chars), activation='softmax', kernel_initializer='glorot_uniform', name='act_output')(b2)
+  b2 = Dense(16,activation = "relu")(b2)
+  time_output = Dense(1, kernel_initializer='glorot_uniform', name='time_output')(b2)
   
   # Create model
   model = Model(inputs=[main_input], outputs=[act_output, time_output])
