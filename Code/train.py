@@ -24,113 +24,125 @@ from randomforest import randomforest
 
 # Data path
 # eventlog = "data/helpdesk.csv"
-eventlog = "data/BPI20.csv"
+eventlogs = ["data/BPI20.csv","data/helpdesk.csv","data/bpi_12_w.csv"]
+for eventlog in eventlogs:
+    print("*-"*15,eventlog,"*-"*15,"\n")
+    if eventlog=="data/BPI20.csv": dataset = "bpi20"
+    elif eventlog=="data/helpdesk.csv": dataset=="helpdesk"
+    elif eventlog=="data/bpi_12_w.csv": dataset=="bpi12"
+    # eventlog = "data/BPI20.csv"
 
-lines_total,timeseqs,timeseqs2,timeseqs3,timeseqs4,numlines = read_eventlog(eventlog)
+    lines_total,timeseqs,timeseqs2,timeseqs3,timeseqs4,numlines = read_eventlog(eventlog)
 
-#Standard Deviation
-divisor = np.sqrt(np.var([item for sublist in timeseqs for item in sublist]))
-divisor2 = np.sqrt(np.var([item for sublist in timeseqs2 for item in sublist]))
+    #Standard Deviation
+    divisor = np.sqrt(np.var([item for sublist in timeseqs for item in sublist]))
+    divisor2 = np.sqrt(np.var([item for sublist in timeseqs2 for item in sublist]))
 
-# Train validation split
-elems_per_fold = int(round(numlines/3))
+    # Train validation split
+    elems_per_fold = int(round(numlines/3))
 
-# Training Data
-lines = lines_total[:2*elems_per_fold]
-lines_t = timeseqs[:2*elems_per_fold]
-lines_t2 = timeseqs2[:2*elems_per_fold]
-lines_t3 = timeseqs3[:2*elems_per_fold]
-lines_t4 = timeseqs4[:2*elems_per_fold]
+    # Training Data
+    lines = lines_total[:2*elems_per_fold]
+    lines_t = timeseqs[:2*elems_per_fold]
+    lines_t2 = timeseqs2[:2*elems_per_fold]
+    lines_t3 = timeseqs3[:2*elems_per_fold]
+    lines_t4 = timeseqs4[:2*elems_per_fold]
 
-# Validation data
-fold3 = lines_total[2*elems_per_fold:]
-fold3_t = timeseqs[2*elems_per_fold:]
-fold3_t2 = timeseqs2[2*elems_per_fold:]
-fold3_t3 = timeseqs3[2*elems_per_fold:]
-fold3_t4 = timeseqs4[2*elems_per_fold:]
+    # Validation data
+    fold3 = lines_total[2*elems_per_fold:]
+    fold3_t = timeseqs[2*elems_per_fold:]
+    fold3_t2 = timeseqs2[2*elems_per_fold:]
+    fold3_t3 = timeseqs3[2*elems_per_fold:]
+    fold3_t4 = timeseqs4[2*elems_per_fold:]
 
-#put delimiter symbol
-lines_withend = map(lambda x: x+'!',lines+fold3) 
-#find maximum line size
-maxlen = max(map(lambda x: len(x),lines_withend))
+    #put delimiter symbol
+    lines_withend = map(lambda x: x+'!',lines+fold3) 
+    #find maximum line size
+    maxlen = max(map(lambda x: len(x),lines_withend))
 
-# next lines here to get all possible characters for events and annotate them with numbers
-lines_withend = map(lambda x: x+'!',lines+fold3) 
-chars = map(lambda x: set(x),lines_withend) 
-chars = list(set().union(*chars))
-chars.sort()
-# target chars have "!" this line end symbol and chars do not.
-target_chars = copy.copy(chars)
-chars.remove("!")
+    # next lines here to get all possible characters for events and annotate them with numbers
+    lines_withend = map(lambda x: x+'!',lines+fold3) 
+    chars = map(lambda x: set(x),lines_withend) 
+    chars = list(set().union(*chars))
+    chars.sort()
+    # target chars have "!" this line end symbol and chars do not.
+    target_chars = copy.copy(chars)
+    chars.remove("!")
 
-char_indices = dict((c, i) for i, c in enumerate(chars))
-indices_char = dict((i, c) for i, c in enumerate(chars))
-target_char_indices = dict((c, i) for i, c in enumerate(target_chars))
-target_indices_char = dict((i, c) for i, c in enumerate(target_chars))
+    char_indices = dict((c, i) for i, c in enumerate(chars))
+    indices_char = dict((i, c) for i, c in enumerate(chars))
+    target_char_indices = dict((c, i) for i, c in enumerate(target_chars))
+    target_indices_char = dict((i, c) for i, c in enumerate(target_chars))
 
-sentences,sentences_t,sentences_t2,sentences_t3,sentences_t4,next_chars,next_chars_t = data(lines,lines_t,lines_t2,lines_t3,lines_t4)
-sentences_val,sentences_t_val,sentences_t2_val,sentences_t3_val,sentences_t4_val,next_chars_val,next_chars_t_val = data(fold3,fold3_t,fold3_t2,fold3_t3,fold3_t4)
+    sentences,sentences_t,sentences_t2,sentences_t3,sentences_t4,next_chars,next_chars_t = data(lines,lines_t,lines_t2,lines_t3,lines_t4)
+    sentences_val,sentences_t_val,sentences_t2_val,sentences_t3_val,sentences_t4_val,next_chars_val,next_chars_t_val = data(fold3,fold3_t,fold3_t2,fold3_t3,fold3_t4)
 
-val_accuracy = []
-val_mean_average_error = []
-train_time = []
+    val_accuracy = []
+    val_mean_average_error = []
+    train_time = []
 
-'''
-Sentence lenght
-'''
-#LSTM
-# X,Cy_a,y_t = vextorize_senlen(char_indices,divisor,divisor2,next_chars_t,next_chars,chars,sentences,maxlen,target_chars,target_char_indices
-#               ,sentences_t,sentences_t2,sentences_t3,sentences_t4)
+    '''
+    Sentence lenght
+    '''
+    #LSTM
+    # X,Cy_a,y_t = vextorize_senlen(char_indices,divisor,divisor2,next_chars_t,next_chars,chars,sentences,maxlen,target_chars,target_char_indices
+    #               ,sentences_t,sentences_t2,sentences_t3,sentences_t4)
 
-# X_val,y_a_val,y_t_val = vextorize_senlen(char_indices,divisor,divisor2,next_chars_t_val,next_chars_val,chars,sentences_val,maxlen,target_chars,target_char_indices
-#               ,sentences_t_val,sentences_t2_val,sentences_t3_val,sentences_t4_val)
+    # X_val,y_a_val,y_t_val = vextorize_senlen(char_indices,divisor,divisor2,next_chars_t_val,next_chars_val,chars,sentences_val,maxlen,target_chars,target_char_indices
+    #               ,sentences_t_val,sentences_t2_val,sentences_t3_val,sentences_t4_val)
 
-# #CNN
-# CX,y_a,Cy_t = vextorize_senlen(char_indices,divisor,divisor2,next_chars_t,next_chars,chars,sentences,maxlen,target_chars,target_char_indices)
+    # #CNN
+    # CX,y_a,Cy_t = vextorize_senlen(char_indices,divisor,divisor2,next_chars_t,next_chars,chars,sentences,maxlen,target_chars,target_char_indices)
 
-# CX_val,y_a_val,y_t_val = vextorize_senlen(char_indices,divisor,divisor2,next_chars_t_val,next_chars_val,chars,sentences_val,maxlen,target_chars,target_char_indices)
+    # CX_val,y_a_val,y_t_val = vextorize_senlen(char_indices,divisor,divisor2,next_chars_t_val,next_chars_val,chars,sentences_val,maxlen,target_chars,target_char_indices)
 
-# print("LSTM+CNN with sentence lenght")
-# acc,mae,total_time,history = senlen(maxlen,chars,target_chars,CX,CX_val,X,X_val,y_a,y_a_val,y_t,y_t_val,target_indices_char)
-# print(acc,mae,total_time)
-# val_accuracy.append(acc); val_mean_average_error.append(mae); train_time.append(total_time)
+    # print("LSTM+CNN with sentence lenght")
+    # acc,mae,total_time,history = senlen(maxlen,chars,target_chars,CX,CX_val,X,X_val,y_a,y_a_val,y_t,y_t_val,target_indices_char)
+    # print(acc,mae,total_time)
+    # val_accuracy.append(acc); val_mean_average_error.append(mae); train_time.append(total_time)
 
 
-'''
-NO sentence lenght
-'''
-#LSTM
-X,Cy_a,y_t = vectorize(char_indices,divisor,divisor2,next_chars_t,next_chars,chars,sentences,maxlen,target_chars,target_char_indices
-              ,sentences_t,sentences_t2,sentences_t3,sentences_t4)
+    '''
+    NO sentence lenght
+    '''
+    #LSTM
+    X,Cy_a,y_t = vectorize(char_indices,divisor,divisor2,next_chars_t,next_chars,chars,sentences,maxlen,target_chars,target_char_indices
+                ,sentences_t,sentences_t2,sentences_t3,sentences_t4)
 
-X_val,y_a_val,y_t_val = vectorize(char_indices,divisor,divisor2,next_chars_t_val,next_chars_val,chars,sentences_val,maxlen,target_chars,target_char_indices
-              ,sentences_t_val,sentences_t2_val,sentences_t3_val,sentences_t4_val)
+    X_val,y_a_val,y_t_val = vectorize(char_indices,divisor,divisor2,next_chars_t_val,next_chars_val,chars,sentences_val,maxlen,target_chars,target_char_indices
+                ,sentences_t_val,sentences_t2_val,sentences_t3_val,sentences_t4_val)
 
-#CNN
-CX,y_a,Cy_t = vectorize(char_indices,divisor,divisor2,next_chars_t,next_chars,chars,sentences,maxlen,target_chars,target_char_indices)
+    #CNN
+    CX,y_a,Cy_t = vectorize(char_indices,divisor,divisor2,next_chars_t,next_chars,chars,sentences,maxlen,target_chars,target_char_indices)
 
-CX_val,y_a_val,y_t_val = vectorize(char_indices,divisor,divisor2,next_chars_t_val,next_chars_val,chars,sentences_val,maxlen,target_chars,target_char_indices)
+    CX_val,y_a_val,y_t_val = vectorize(char_indices,divisor,divisor2,next_chars_t_val,next_chars_val,chars,sentences_val,maxlen,target_chars,target_char_indices)
 
-print("LSTM+CNN")
-acc,mae,total_time,history = lstm_cnn(maxlen,chars,target_chars,CX,CX_val,X,X_val,y_a,y_a_val,y_t,y_t_val,target_indices_char,divisor)
-print(acc,mae,total_time)
-val_accuracy.append(acc); val_mean_average_error.append(mae); train_time.append(total_time)
+    print("LSTM+CNN")
+    acc,mae,total_time,history = lstm_cnn(maxlen,chars,target_chars,CX,CX_val,X,X_val,y_a,y_a_val,y_t,y_t_val,target_indices_char,divisor,dataset)
+    print(acc,mae,total_time)
+    val_accuracy.append(acc); val_mean_average_error.append(mae); train_time.append(total_time)
+    print()
 
-# print("ONLY LSTM")
-# acc,mae,total_time,history = lstm(maxlen,chars,target_chars,CX,CX_val,X,X_val,y_a,y_a_val,y_t,y_t_val,target_indices_char,divisor)
-# print(acc,mae,total_time)
-# val_accuracy.append(acc); val_mean_average_error.append(mae); train_time.append(total_time)
+    print("ONLY LSTM")
+    acc,mae,total_time,history = lstm(maxlen,chars,target_chars,CX,CX_val,X,X_val,y_a,y_a_val,y_t,y_t_val,target_indices_char,divisor,dataset)
+    print(acc,mae,total_time)
+    val_accuracy.append(acc); val_mean_average_error.append(mae); train_time.append(total_time)
+    print()
 
-# print("ONLY CNN")
-# acc,mae,total_time,history = cnn(maxlen,chars,target_chars,X,X_val,y_a,y_a_val,y_t,y_t_val,target_indices_char,divisor)
-# print(acc,mae,total_time)
-# val_accuracy.append(acc); val_mean_average_error.append(mae); train_time.append(total_time)
+    print("ONLY CNN")
+    acc,mae,total_time,history = cnn(maxlen,chars,target_chars,X,X_val,y_a,y_a_val,y_t,y_t_val,target_indices_char,divisor,dataset)
+    print(acc,mae,total_time)
+    val_accuracy.append(acc); val_mean_average_error.append(mae); train_time.append(total_time)
+    print()
 
-# print("Random forest")
-# acc,mae,total_time = randomforest(X, y_a, y_t, X_val, y_a_val, y_t_val,divisor)
-# print(acc,mae,total_time)
-# val_accuracy.append(acc); val_mean_average_error.append(mae); train_time.append(total_time)
+    print("Random forest")
+    acc,mae,total_time = randomforest(X, y_a, y_t, X_val, y_a_val, y_t_val,divisor,dataset)
+    print(acc,mae,total_time)
+    val_accuracy.append(acc); val_mean_average_error.append(mae); train_time.append(total_time)
+    print()
 
-print("val_accuracy:",val_accuracy)
-print("val_mean_average_error:",val_mean_average_error)
-print("train_time:",train_time)
+    print("#--*"*30)
+    print("val_accuracy:",val_accuracy)
+    print("val_mean_average_error:",val_mean_average_error)
+    print("train_time:",train_time)
+    print()
