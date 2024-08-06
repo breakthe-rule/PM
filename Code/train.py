@@ -28,8 +28,8 @@ eventlogs = ["data/BPI20.csv","data/helpdesk.csv","data/bpi_12_w.csv"]
 for eventlog in eventlogs:
     print("*-"*15,eventlog,"*-"*15,"\n")
     if eventlog=="data/BPI20.csv": dataset = "bpi20"
-    elif eventlog=="data/helpdesk.csv": dataset=="helpdesk"
-    elif eventlog=="data/bpi_12_w.csv": dataset=="bpi12"
+    elif eventlog=="data/helpdesk.csv": dataset="helpdesk"
+    elif eventlog=="data/bpi_12_w.csv": dataset="bpi12"
     # eventlog = "data/BPI20.csv"
 
     lines_total,timeseqs,timeseqs2,timeseqs3,timeseqs4,numlines = read_eventlog(eventlog)
@@ -76,7 +76,10 @@ for eventlog in eventlogs:
 
     sentences,sentences_t,sentences_t2,sentences_t3,sentences_t4,next_chars,next_chars_t = data(lines,lines_t,lines_t2,lines_t3,lines_t4)
     sentences_val,sentences_t_val,sentences_t2_val,sentences_t3_val,sentences_t4_val,next_chars_val,next_chars_t_val = data(fold3,fold3_t,fold3_t2,fold3_t3,fold3_t4)
-
+    print(sentences[0:10])
+    print(next_chars[:10])
+    print(sentences_t[:10])
+    print(next_chars_t[:10])
     val_accuracy = []
     val_mean_average_error = []
     train_time = []

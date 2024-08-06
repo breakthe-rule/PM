@@ -2,9 +2,9 @@ import pandas as pd
 import csv 
 from datetime import datetime
 from time import time
-data = pd.read_csv("data/BPI20.csv")
+data = pd.read_csv("C:/Users/Lenovo/Downloads/BPI19.csv")
 
-filename = "data/BPI20_tanay.csv"
+filename = "data/BPI19.csv"
 csvfile = open(filename, 'w', newline='')
 csvwriter = csv.writer(csvfile)
 csvwriter.writerow(["CaseID","ActivityID","CompleteTimestamp"])

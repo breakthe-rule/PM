@@ -16,7 +16,7 @@ def randomforest(X, y_a, y_t, X_val, y_a_val, y_t_val,divisor,dataset):
     start = time.time()
     
     ''' HelpDesk '''
-    if dataset=="helpdek":
+    if dataset=="helpdesk":
         print("Classifier")
         # For the first output branch (multiclass classification)
         rf_classifier = RandomForestClassifier(random_state=42,n_estimators=19, max_depth=14)
