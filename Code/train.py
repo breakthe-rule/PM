@@ -10,6 +10,8 @@ import copy
 import warnings
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
+import os
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
 # Importing functions
 from read_eventlog import read_eventlog
@@ -22,14 +24,17 @@ from lstm import lstm
 from cnn import cnn
 from randomforest import randomforest
 
-# Data path
+# Data pat
 # eventlog = "data/helpdesk.csv"
-eventlogs = ["data/BPI20.csv","data/helpdesk.csv","data/bpi_12_w.csv"]
+# eventlogs = ["data/BPI19.csv", "data/BPI20.csv","data/helpdesk.csv","data/bpi_12_w.csv"]
+eventlogs = ["data/BPI17.csv"]
 for eventlog in eventlogs:
     print("*-"*15,eventlog,"*-"*15,"\n")
     if eventlog=="data/BPI20.csv": dataset = "bpi20"
     elif eventlog=="data/helpdesk.csv": dataset="helpdesk"
     elif eventlog=="data/bpi_12_w.csv": dataset="bpi12"
+    elif eventlog=="data/BPI19.csv": dataset = "bpi19"
+    elif eventlog=="data/BPI17.csv": dataset = "bpi17"
     # eventlog = "data/BPI20.csv"
 
     lines_total,timeseqs,timeseqs2,timeseqs3,timeseqs4,numlines = read_eventlog(eventlog)
@@ -126,23 +131,23 @@ for eventlog in eventlogs:
     val_accuracy.append(acc); val_mean_average_error.append(mae); train_time.append(total_time)
     print()
 
-    print("ONLY LSTM")
-    acc,mae,total_time,history = lstm(maxlen,chars,target_chars,CX,CX_val,X,X_val,y_a,y_a_val,y_t,y_t_val,target_indices_char,divisor,dataset)
-    print(acc,mae,total_time)
-    val_accuracy.append(acc); val_mean_average_error.append(mae); train_time.append(total_time)
-    print()
+    # print("ONLY LSTM")
+    # acc,mae,total_time,history = lstm(maxlen,chars,target_chars,CX,CX_val,X,X_val,y_a,y_a_val,y_t,y_t_val,target_indices_char,divisor,dataset)
+    # print(acc,mae,total_time)
+    # val_accuracy.append(acc); val_mean_average_error.append(mae); train_time.append(total_time)
+    # print()
 
-    print("ONLY CNN")
-    acc,mae,total_time,history = cnn(maxlen,chars,target_chars,X,X_val,y_a,y_a_val,y_t,y_t_val,target_indices_char,divisor,dataset)
-    print(acc,mae,total_time)
-    val_accuracy.append(acc); val_mean_average_error.append(mae); train_time.append(total_time)
-    print()
+    # print("ONLY CNN")
+    # acc,mae,total_time,history = cnn(maxlen,chars,target_chars,X,X_val,y_a,y_a_val,y_t,y_t_val,target_indices_char,divisor,dataset)
+    # print(acc,mae,total_time)
+    # val_accuracy.append(acc); val_mean_average_error.append(mae); train_time.append(total_time)
+    # print()
 
-    print("Random forest")
-    acc,mae,total_time = randomforest(X, y_a, y_t, X_val, y_a_val, y_t_val,divisor,dataset)
-    print(acc,mae,total_time)
-    val_accuracy.append(acc); val_mean_average_error.append(mae); train_time.append(total_time)
-    print()
+    # print("Random forest")
+    # acc,mae,total_time = randomforest(X, y_a, y_t, X_val, y_a_val, y_t_val,divisor,dataset)
+    # print(acc,mae,total_time)
+    # val_accuracy.append(acc); val_mean_average_error.append(mae); train_time.append(total_time)
+    # print()
 
     print("#--*"*30)
     print("val_accuracy:",val_accuracy)

@@ -2,9 +2,9 @@ import pandas as pd
 import csv 
 from datetime import datetime
 from time import time
-data = pd.read_csv("C:/Users/Lenovo/Downloads/BPI19.csv")
+data = pd.read_csv("data/BPI17_raw.csv")
 
-filename = "data/BPI19.csv"
+filename = "data/BPI17.csv"
 csvfile = open(filename, 'w', newline='')
 csvwriter = csv.writer(csvfile)
 csvwriter.writerow(["CaseID","ActivityID","CompleteTimestamp"])
@@ -29,7 +29,10 @@ for i,row in data.iterrows():
         activity = activity_max
         activity_max += 1
     
-    dt = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S%z")
+    if '.' in timestamp:
+        dt = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S.%f%z")
+    else:
+        dt = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S%z")
     timestamp = dt.strftime("%Y-%m-%d %H:%M:%S")
     
     line = [caseid,activity,timestamp]
